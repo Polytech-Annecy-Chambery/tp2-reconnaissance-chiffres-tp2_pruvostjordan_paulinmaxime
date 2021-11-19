@@ -47,7 +47,23 @@ class Image:
     #   on retourne une nouvelle image binarisee
     #==============================================================================
     def binarisation(self, S):
-        pass
+        im_bin = Image()
+        
+        # affectation a l'image im_bin d'un tableau de pixels de meme taille
+        # que self dont les intensites, de type uint8 (8bits non signes),
+        # sont mises a 0
+        im_bin.set_pixels(np.zeros((self.H, self.W), dtype=np.uint8))
+        for y in range(0,self.H):
+            for x in range(0,self.W):
+                if self.pixels[y][x] > S: im_bin.pixels[y][x] = 255
+                else : im_bin.pixels[y][x] = 0
+        return im_bin
+        # TODO: boucle imbriquees pour parcourir tous les pixels de l'image im_bin
+        # et calculer l'image binaire
+        
+        
+        return im_bin    
+
 
 
     #==============================================================================
@@ -59,18 +75,81 @@ class Image:
     #   on retourne une nouvelle image recadree
     #==============================================================================
     def localisation(self):
-        pass
+        res = Image()
+        k=0
+        presence = False
+        haut, bas, gauche, droite = -1,-1,-1,-1
+        while presence == False and k < self.H and haut == -1: # on a pas trouvé le haut 
+            presence = False
+            for l in range (0, self.W):
+                if self.pixels[k][l] == 0:
+                    presence = True
+            if presence == True:
+                haut = k
+            k+=1
+
+        k = self.H - 1
+        presence = False
+        
+        while presence == False and k >= 0 and bas == -1:# on a pas trouvé le bas 
+            presence = False
+            for l in range (0, self.W):
+                if self.pixels[k][l] == 0:
+                    presence = True
+            if presence == True:
+                bas = k + 1
+            k-=1
+
+                
+        k = 0 # on check G 
+        presence = False
+
+        while presence == False and k < self.W and gauche == -1: # on a pas trouvé la gauche  
+            presence = False
+            for l in range (0, self.H):
+                if self.pixels[l][k] == 0:
+                    presence = True
+            if presence == True:
+                gauche = k
+            k+=1
+
+        k = self.W - 1 # on check D 
+        presence = False
+
+        while presence == False and k >= 0 and droite == -1: # on a pas trouvé la droite
+            presence = False
+            for l in range (0, self.H):
+                if self.pixels[l][k] == 0:
+                    presence = True
+            if presence == True:
+                droite = k
+            k-=1
+            
+        res.set_pixels(np.array(self.pixels[haut:bas,gauche:droite], dtype=np.uint8))
+        return res
+        
 
     #==============================================================================
     # Methode de redimensionnement d'image
     #==============================================================================
     def resize(self, new_H, new_W):
-        pass
+        self.H = new_H
+        self.W = new_W
+        self.pixels = np.uint8(resize(self.pixels, (new_H, new_W), 0))
+        return self
 
 
     #==============================================================================
     # Methode de mesure de similitude entre l'image self et un modele im
     #==============================================================================
     def similitude(self, im):
-        pass
-
+        res = Image()
+        res.set_pixels(np.zeros((self.H, self.W), dtype=np.uint8))
+        count = 0
+        for k in range(0,self.H):
+            for l in range(0,self.W):
+                if im.pixels[k][l] == self.pixels[k][l]:
+                    count+=1
+        count = count / ((self.H)*(self.W))
+        print(count)
+        return count
