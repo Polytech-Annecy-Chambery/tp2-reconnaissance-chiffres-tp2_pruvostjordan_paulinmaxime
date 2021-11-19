@@ -151,5 +151,4 @@ class Image:
                 if im.pixels[k][l] == self.pixels[k][l]:
                     count+=1
         count = count / ((self.H)*(self.W))
-        print(count)
         return count
