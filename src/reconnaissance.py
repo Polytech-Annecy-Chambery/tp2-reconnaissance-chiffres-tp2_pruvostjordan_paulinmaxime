@@ -10,7 +10,10 @@ def lecture_modeles(chemin_dossier):
         liste_modeles.append(model)
     return liste_modeles
 
-
 def reconnaissance_chiffre(image, liste_modeles, S):
-    pass
-
+    res = []
+    for im in liste_modeles:
+        im = im.binarisation(S).localisation()
+        res.append(im.similitude(image))
+    for k in range(0,len(res)):
+        if res[k] == max(res): return k
